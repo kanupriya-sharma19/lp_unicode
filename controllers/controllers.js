@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 const secretKey = process.env.SECRETKEY; 
+const cloudinary = require("../utils/cloudinary");
+const multer = require('multer');
 
 async function postperson(req, res) {
   try {
@@ -33,13 +35,13 @@ async function loginperson(req, res) {
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'sharmakanpuriya@gmail.com',
+        user: process.env.USER,
         pass: process.env.APPKEY
       }
     });
 
     let mailOptions = {
-      user: 'sharmakanpuriya@gmail.com',
+      user: process.env.USER,
       to: email,
       subject: 'Logged in successfully!!',
       html: '<p>Welcome to our app &hearts;!</p>'
@@ -51,7 +53,8 @@ async function loginperson(req, res) {
       }
       console.log(`Message Sent: ${info.response}`);
     });
-  const token = jwt.sign({ person: foundperson._id }, secretKey, { expiresIn: '30d' });
+
+   const token = jwt.sign({ person: foundperson._id }, secretKey, { expiresIn: '30d' });
   return res.status(200).json({ message: "Login successful", token });
     
   } catch (error) {
@@ -78,4 +81,68 @@ function verifyToken(req, res, next) {
   }
 }
 
-module.exports = { postperson, loginperson, verifyToken };
+const storage = multer.diskStorage({
+  filename: function (req,file,cb) {
+    cb(null, file.originalname)
+  }
+});
+
+const image = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }
+});
+
+async function upload(req,res){
+  const { email } = req.body;
+    const foundperson = await person.findOne({ email });
+    if (!foundperson) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+  try{   const output=await cloudinary.uploader.upload(req.file.path, function (err, result){
+        if(err) {
+        console.log(err);
+          return res.status(500).json({
+            success: false,
+            message: "Error"
+          })
+        } else{ return res.status(200).json({
+          success: true,
+          message:"Uploaded!",
+          data: result
+        })}
+      });
+  
+  } catch(err){
+    return res.status(500).send({ message: "Error in logging in", err });
+  }
+}
+
+async function updateImage(req, res) {
+  try { 
+    const { publicId,email } = req.body; 
+    const foundperson = await person.findOne({ email });
+    if (!foundperson) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    if (!publicId) {
+      return res.status(400).json({ message: "No public ID provided" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      public_id: publicId, 
+      overwrite: true 
+    });
+    res.status(200).json({
+      success: true,
+      message: "Image updated!",
+      data: result
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Error updating image", error: err });
+  }
+}
+module.exports = { postperson, loginperson, verifyToken,image,upload,updateImage };

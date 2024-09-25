@@ -1,4 +1,4 @@
-const mongoose=require('mongoose');
+import mongoose from 'mongoose';
 const schema= new mongoose.Schema({
     email:{
         type:String,
@@ -10,7 +10,7 @@ const schema= new mongoose.Schema({
         type:String,
         required:true,
       
-    }
+    },profileImage:{type:String}
 });
 const person = mongoose.model('person', schema);
-module.exports = { person};
+export { person};

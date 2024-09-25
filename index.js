@@ -1,15 +1,17 @@
-const express = require("express");
-const app = express();
-const dotenv = require("dotenv");
+import express from "express";
+import dotenv from "dotenv";
+import {router} from "./routes/routes.js";
+import { connectToDB } from './utils/connection.js';
 dotenv.config();
+const app = express();
 const port = process.env.PORT;
-const {connectToDB } = require('./utils/connection');
+
 connectToDB();
 app.listen(port, (req, res) => {
   console.log("APP IS AT", port);
 });
 
-const router = require("./routes/routes");
+
 app.use(express.json());
 app.use("/users", router);
 

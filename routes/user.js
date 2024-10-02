@@ -1,14 +1,15 @@
 import express from 'express';
 import { image } from "../middlewares/multer.js";
 import { verifyToken } from '../middlewares/authentication.js';
-import { postperson, loginperson, upload, updateImage } from '../controllers/controllers.js';
+import { postperson, loginperson,update_user,delete_user } from '../controllers/user.js';
 const router = express.Router();
-router.post('/signup', postperson);
+router.post('/signup', image, postperson);
 router.post('/login', loginperson);
+router.delete('/delete_user/:id',delete_user);
 router.get('/protected', verifyToken, (req, res) => {
   res.json({ message: "This is a protected route", person: req.person });
 });
-router.post('/upload', image.single('file'),upload);
-router.patch('/update_image', image.single('file'),updateImage);
+
+router.put('/update_user/:id', image, update_user);
 export {router};
 

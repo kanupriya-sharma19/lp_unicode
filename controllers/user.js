@@ -129,60 +129,87 @@ async function loginperson(req, res) {
   }
 }
 
-async function update_user(req, res) {
-  try {
-    const UserId = req.params.id;
-    let Profile_Image;
-    let Resume;
-    if (req.file) {
-      const publicId = `profilepics/${UserId}`;
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: "profilepics",
-        public_id: publicId,
-        overwrite: true,
-      });
-      Profile_Image = result.secure_url;
-    }
-
-    if (req.files && req.files.resume) {
-      const resumePublicId = `resumes/${UserId}`;
-      const resumeResult = await cloudinary.uploader.upload(
-        req.files.resume[0].path,
-        {
-          folder: "resumes",
-          public_id: resumePublicId,
-          resource_type: "raw",
-          overwrite: true,
+    async function update_user(req, res) {
+      try {
+        const UserId = req.params.id;
+        const user = await person.findById(UserId);
+        if (!user) {
+          return res.status(404).send({ message: "User not found" });
         }
-      );
-      Resume = resumeResult.secure_url;
+    
+        let Profile_Image; 
+        let Resume; 
+    
+        
+        if (req.files && req.files.Profile_Image) {
+          console.log("Profile image received:", req.files.Profile_Image[0]); 
+          const existingImageUrl = user.Profile_Image;
+          const profilePublicId = existingImageUrl.split("/").pop().split(".")[0];
+    
+          console.log("Using public ID for upload:", profilePublicId);
+    
+          const result = await cloudinary.uploader.upload(req.files.Profile_Image[0].path, {
+            folder: "Profile_pics",
+            public_id: profilePublicId, 
+            overwrite: true, 
+          });
+    
+          console.log("Cloudinary upload result:", result); 
+    
+          
+          Profile_Image = result.secure_url; 
+        } else {
+          console.log("No profile image uploaded.");
+        }
+    
+        // Check for resume upload
+        if (req.files && req.files.Resume) {
+          console.log("Resume received:", req.files.Resume[0]); 
+          const existingResumeUrl = user.Resume;
+          const resumePublicId = existingResumeUrl.split("/").pop().split(".")[0];
+    
+          console.log("Using public ID for resume upload:", resumePublicId);
+    
+          const result = await cloudinary.uploader.upload(req.files.Resume[0].path, {
+            folder: "Resume",
+            public_id: resumePublicId, 
+            resource_type: "raw", 
+            overwrite: true, 
+          });
+    
+          console.log("Cloudinary upload result for resume:", result); 
+    
+          
+          Resume = result.secure_url; 
+        } else {
+          console.log("No resume uploaded.");
+        }
+    
+       
+        const updateData = {Tech_Stack: req.body.Tech_Stack,
+            Email: req.body.Email,
+            Password: req.body.Password,};
+        if (Profile_Image) updateData.Profile_Image = Profile_Image;
+        if (Resume) updateData.Resume = Resume;
+    
+        
+        const updatedUser = await person.findOneAndUpdate(
+          { _id: UserId },
+          updateData,
+          { new: true }
+        );
+    
+        if (!updatedUser) {
+          return res.status(404).send({ message: "User not found" });
+        }
+    
+        res.status(200).send({ message: "User updated successfully", updatedUser });
+      } catch (error) {
+        console.error("Error updating User:", error);
+        res.status(500).send({ message: "Error updating User", error });
+      }
     }
-
-    const updateData = {
-      Tech_Stack: req.body.Tech_Stack,
-      Email: req.body.Email,
-      Password: req.body.Password,
-    };
-
-    if (Profile_Image) updateData.Profile_Image = Profile_Image;
-    if (Resume) updateData.Resume = Resume;
-
-    const updatedUser = await person.findOneAndUpdate(
-      { _id: UserId },
-      updateData,
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).send({ message: "User not found" });
-    }
-
-    res.status(200).send({ message: "User updated successfully", updatedUser });
-  } catch (error) {
-    res.status(500).send({ message: "Error updating User", error });
-  }
-}
-
+    
 async function delete_user(req, res) {
   try {
     const UserId = req.params.id;
@@ -192,22 +219,64 @@ async function delete_user(req, res) {
       return res.status(404).send({ message: "User not found" });
     }
 
-    const profilePublicId = user.Profile_Image.split("/").pop().split(".")[0];
-    await cloudinary.uploader.destroy(`Profile_pics/${profilePublicId}`);
-
-    if (user.Resume) {
-      const resumePublicId = user.Resume.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(`Resume/${resumePublicId}`, {
-        resource_type: "raw",
-      });
+    // Delete Profile Image
+    if (user.Profile_Image) {
+      try {
+        const profilePublicId = decodeURIComponent(user.Profile_Image.split("/").pop().split(".")[0]);
+        console.log("Profile Public ID:", profilePublicId);
+        const profileDeleteResponse = await cloudinary.uploader.destroy(`Profile_pics/${profilePublicId}`);
+        console.log("Profile Delete Response:", profileDeleteResponse);
+      } catch (error) {
+        console.error("Error deleting profile image:", error);
+      }
+    } else {
+      console.log("No Profile_Image to delete.");
     }
 
+
+//     const resumePublicId = "Resume/IPD Orientation 2024-25"
+//   // Replace spaces with underscores
+
+// console.log("Corrected Resume Public ID:", resumePublicId);
+
+// // Now try to delete using the corrected public ID
+// const resumeDeleteResponse = await cloudinary.uploader.destroy(resumePublicId, { resource_type: "raw" });
+// console.log("Resume Delete Response:", resumeDeleteResponse);
+
+// if (resumeDeleteResponse.result !== 'ok') {
+//   console.error(`Failed to delete resume: ${JSON.stringify(resumeDeleteResponse)}`);
+// }
+
+  if (user.Resume) {
+    try {
+      const resumeUrl = user.Resume;  
+      let resumePublicId = decodeURIComponent(resumeUrl.split("/").pop().split(".")[0]);
+     
+      console.log("Resume URL:", resumeUrl);
+      console.log("Extracted Resume Public ID:", resumePublicId);
+      
+      const resumeDeleteResponse = await cloudinary.uploader.destroy(`Resume/${resumePublicId}`, { resource_type: "raw" });
+      console.log("Resume Delete Response:", resumeDeleteResponse);
+      
+      if (resumeDeleteResponse.result !== 'ok') {
+        console.error(`Failed to delete resume: ${JSON.stringify(resumeDeleteResponse)}`);
+      }
+    } catch (error) {
+      console.error("Error deleting resume:", error);
+    }
+  } else {
+    console.log("No Resume to delete.");
+  }
+  
     await person.findByIdAndDelete(UserId);
     res.status(200).send({ message: "User deleted successfully" });
   } catch (error) {
+    console.error("Error deleting User:", error);
     res.status(500).send({ message: "Error deleting User", error });
   }
 }
+
+
 
 // async function upload(req, res) {
 //   const { Email,Password } = req.body;

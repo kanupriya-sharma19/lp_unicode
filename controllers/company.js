@@ -24,25 +24,28 @@ async function displayComp(req, res) {
       res.status(500).send({ message: "Error in making",error });
     }
   }
-  
   async function updateComp(req, res) {
     try {
       const companyId = req.params.id;
-      const updatedComp = await Company.findOneAndUpdate(
-        { _id: companyId },
-        { Name:req.body.Name,Website:req.body.Website,Industry:req.body.Industry,Recruiters:req.body.Recruiters,Description:req.body.Description}, 
+      const recruiterId = req.body.Recruiters;
+      if (!recruiterId) {
+        return res.status(400).send({ message: "Recruiter ID is required" });
+      }
+const updatedComp = await Company.findByIdAndUpdate(
+        companyId,
+        { $addToSet: { Recruiters: recruiterId } }, 
         { new: true } 
       );
-  
       if (!updatedComp) {
         return res.status(404).send({ message: "Company not found" });
       }
-  
-      res.status(200).send({ message: "Company updated successfully" ,updatedComp});
+
+      res.status(200).send({ message: "Company updated successfully", updatedComp });
     } catch (error) {
-      res.status(500).send({ message: "Error updating Company", error });
+      res.status(500).send({ message: "Error updating Company", details: error.message });
     }
   }
+  
   
   async function deleteComp(req, res) {
     try {

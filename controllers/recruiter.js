@@ -1,5 +1,7 @@
 import { Recruiters} from "../models/recruiter.js";
-
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+let secretKey = process.env.SECRETKEY;
 
 async function displayRec(req, res) {
   try {
@@ -11,21 +13,68 @@ async function displayRec(req, res) {
   }
 }
 
-  
-  async function postRec(req, res) {
-    try {
-      const { Name,Email,CompanyId,Description } = req.body;
-      const rec = new Recruiters({
-        Name,Email,CompanyId,Description
-      });
-      await rec.save();
-      res.status(200).send({ message: "Recruiterss created successfully",rec });
-    } catch (error) {
-      
-      res.status(500).send({ message: "Error in making",error });
+async function postRec(req, res) {
+  try {
+    const { Name, Password, Email, CompanyId, Qualification, Current_position, Salary } = req.body;
+    if (!Email) {
+      return res.status(400).send("Email is required!");
     }
+
+    if (!Email.includes("@gmail.com")) {
+      return res.status(400).send("Invalid Gmail address!");
+    }
+ 
+    const hashedPassword = await bcrypt.hash(Password, 10);
+
+   
+    const newrec = new Recruiters({
+      Name,
+      Email,
+      Password: hashedPassword,
+      CompanyId,
+      Qualification,
+      Current_position,
+      Salary
+    });
+
+
+    await newrec.save();
+
+   
+    res.status(200).send({ message: "Recruiter created successfully", newrec });
+  } catch (error) {
+   
+    res.status(500).send({ message: "Error in creating recruiter", details:error.message });
   }
-  
+}
+
+  async function loginRec(req, res) {try{
+    const { Email, Password } = req.body;
+    if (!Email || !Password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
+    }
+    const foundperson = await Recruiters.findOne({ Email });
+    if (!foundperson) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    const isMatch = await bcrypt.compare(Password, foundperson.Password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    const token = jwt.sign({ person: foundperson._id }, secretKey, {
+      expiresIn: "30d",
+    });
+    return res.status(200).json({ message: "Login successful", token });
+  }
+  catch(error){
+    return res
+    .status(500)
+    .json({ message: "Error in logging in", error: error.message });
+  }
+  }
+
   async function updateRec(req, res) {
     try {
       const recId = req.params.id;
@@ -62,4 +111,4 @@ async function displayRec(req, res) {
     }
   }
   
-export{ displayRec, postRec, updateRec, deleteRec};
+export{ displayRec, postRec, updateRec, deleteRec,loginRec};

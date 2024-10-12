@@ -16,7 +16,7 @@ const schema = new mongoose.Schema({
   Tech_Stack: {
     Stacks: {
       type: [String],
-      required: true,
+    
     },
   },
 

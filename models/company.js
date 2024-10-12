@@ -7,7 +7,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   Industry: { type: String },
-  Recruiters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Recruites" }],
+  Recruiters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Recruiters" }],
   Description: { type: String, required: true },
 });
 const Company = mongoose.model("Company", schema);

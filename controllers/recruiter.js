@@ -63,7 +63,7 @@ async function postRec(req, res) {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    const token = jwt.sign({ person: foundperson._id }, secretKey, {
+    const token = jwt.sign({ person: foundperson._id ,companyId:foundperson.CompanyId}, secretKey, {
       expiresIn: "30d",
     });
     return res.status(200).json({ message: "Login successful", token });
@@ -77,7 +77,7 @@ async function postRec(req, res) {
 
   async function updateRec(req, res) {
     try {
-      const recId = req.params.id;
+      const recId = req.person.person;
       const updatedRec = await Recruiters.findOneAndUpdate(
         { _id: recId },
         { Name:req.body.Name,Email:req.body.Email,CompanyId:req.body.CompanyId,Description:req.body.Description}, 
@@ -96,7 +96,7 @@ async function postRec(req, res) {
   
   async function deleteRec(req, res) {
     try {
-      const recId = req.params.id;
+      const recId = req.person.person;
       const rec = await Recruiters.findOneAndDelete({_id: recId });
   
       if (rec) {

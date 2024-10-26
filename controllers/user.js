@@ -131,7 +131,7 @@ async function loginperson(req, res) {
 
     async function update_user(req, res) {
       try {
-        const UserId = req.params.id;
+        const UserId = req.person.person;
         const user = await person.findById(UserId);
         if (!user) {
           return res.status(404).send({ message: "User not found" });
@@ -173,7 +173,7 @@ async function loginperson(req, res) {
           const result = await cloudinary.uploader.upload(req.files.Resume[0].path, {
             folder: "Resume",
             public_id: resumePublicId, 
-            resource_type: "raw", 
+            // resource_type: "raw", 
             overwrite: true, 
           });
     
@@ -187,7 +187,7 @@ async function loginperson(req, res) {
     
        
         const updateData = {Tech_Stack: req.body.Tech_Stack,
-            Email: req.body.Email,
+            Email: req.body.Email,Name:req.body.Name,
             Password: req.body.Password,};
         if (Profile_Image) updateData.Profile_Image = Profile_Image;
         if (Resume) updateData.Resume = Resume;
@@ -212,7 +212,7 @@ async function loginperson(req, res) {
     
 async function delete_user(req, res) {
   try {
-    const UserId = req.params.id;
+    const UserId = req.person.person;
 
     const user = await person.findById(UserId);
     if (!user) {
@@ -220,20 +220,63 @@ async function delete_user(req, res) {
     }
 
     // Delete Profile Image
-    if (user.Profile_Image) {
-      try {
-        const profilePublicId = decodeURIComponent(user.Profile_Image.split("/").pop().split(".")[0]);
-        console.log("Profile Public ID:", profilePublicId);
-        const profileDeleteResponse = await cloudinary.uploader.destroy(`Profile_pics/${profilePublicId}`);
-        console.log("Profile Delete Response:", profileDeleteResponse);
-      } catch (error) {
-        console.error("Error deleting profile image:", error);
-      }
-    } else {
-      console.log("No Profile_Image to delete.");
+  //   if (user.Profile_Image) {
+  //     try {
+  //       const profilePublicId = decodeURIComponent(user.Profile_Image.split("/").pop().split(".")[0]);
+  //       console.log("Profile Public ID:", profilePublicId);
+  //       const profileDeleteResponse = await cloudinary.uploader.destroy(`Profile_pics/${profilePublicId}`);
+  //       console.log("Profile Delete Response:", profileDeleteResponse);
+  //     } catch (error) {
+  //       console.error("Error deleting profile image:", error);
+  //     }
+  //   } else {
+  //     console.log("No Profile_Image to delete.");
+  //   }
+
+  // if (user.Resume) {
+  //   try {
+  //     const resumeUrl = user.Resume;  
+  //     let resumePublicId = decodeURIComponent(resumeUrl.split("/").pop().split(".")[0]);
+     
+  //     console.log("Resume URL:", resumeUrl);
+  //     console.log("Extracted Resume Public ID:", resumePublicId);
+      
+  //     const resumeDeleteResponse = await cloudinary.uploader.destroy(`Resume/${resumePublicId}`, { resource_type: "raw" });
+  //     console.log("Resume Delete Response:", resumeDeleteResponse);
+      
+  //     if (resumeDeleteResponse.result !== 'ok') {
+  //       console.error(`Failed to delete resume: ${JSON.stringify(resumeDeleteResponse)}`);
+  //     }
+  if (user.Profile_Image) {
+    try {
+      const profilePublicId = decodeURIComponent(user.Profile_Image.split("/").pop().split(".")[0]);
+      console.log("Profile Public ID:", profilePublicId);
+      const profileDeleteResponse = await cloudinary.uploader.destroy(`Profile_pics/${profilePublicId}`);
+      console.log("Profile Delete Response:", profileDeleteResponse);
+    } catch (error) {
+      console.error("Error deleting profile image:", error);
     }
-
-
+  } else {
+    console.log("No Profile_Image to delete.");
+  }
+  
+  if (user.Resume) {
+    try {
+      const resumeUrl = user.Resume;
+      let resumePublicId = decodeURIComponent(resumeUrl.split("/").pop().split(".")[0]).trim();
+      console.log("Resume URL:", resumeUrl);
+      console.log("Extracted Resume Public ID:", resumePublicId);
+  
+      const resumeDeleteResponse = await cloudinary.uploader.destroy(`Resume/${resumePublicId}`);
+      console.log("Resume Delete Response:", resumeDeleteResponse);
+    } catch (error) {
+      console.error("Error deleting resume:", error);
+    }
+  } else {
+    console.log("No Resume to delete.");
+  }
+    
+  
 //     const resumePublicId = "Resume/IPD Orientation 2024-25"
 //   // Replace spaces with underscores
 
@@ -246,28 +289,6 @@ async function delete_user(req, res) {
 // if (resumeDeleteResponse.result !== 'ok') {
 //   console.error(`Failed to delete resume: ${JSON.stringify(resumeDeleteResponse)}`);
 // }
-
-  if (user.Resume) {
-    try {
-      const resumeUrl = user.Resume;  
-      let resumePublicId = decodeURIComponent(resumeUrl.split("/").pop().split(".")[0]);
-     
-      console.log("Resume URL:", resumeUrl);
-      console.log("Extracted Resume Public ID:", resumePublicId);
-      
-      const resumeDeleteResponse = await cloudinary.uploader.destroy(`Resume/${resumePublicId}`, { resource_type: "raw" });
-      console.log("Resume Delete Response:", resumeDeleteResponse);
-      
-      if (resumeDeleteResponse.result !== 'ok') {
-        console.error(`Failed to delete resume: ${JSON.stringify(resumeDeleteResponse)}`);
-      }
-    } catch (error) {
-      console.error("Error deleting resume:", error);
-    }
-  } else {
-    console.log("No Resume to delete.");
-  }
-  
     await person.findByIdAndDelete(UserId);
     res.status(200).send({ message: "User deleted successfully" });
   } catch (error) {

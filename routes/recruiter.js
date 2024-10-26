@@ -9,7 +9,7 @@ rec.post('/login_recruiter', loginRec);
 rec.get('/protected', verifyRec, (req, res) => {
     res.json({ message: "This is a protected route", person: req.person });
   });
-rec.patch('/update_recruiter/:id',updateRec);
-rec.delete('/delete_recruiter/:id',deleteRec);
+rec.patch('/update_recruiter',verifyRec,updateRec);
+rec.delete('/delete_recruiter',verifyRec,deleteRec);
 export {rec};
 

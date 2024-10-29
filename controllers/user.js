@@ -196,7 +196,7 @@ async function loginperson(req, res) {
         const updatedUser = await person.findOneAndUpdate(
           { _id: UserId },
           updateData,
-          { new: true }
+          { new: true },{runValidators:true}
         );
     
         if (!updatedUser) {

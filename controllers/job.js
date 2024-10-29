@@ -16,10 +16,7 @@ async function displayjob(req, res) {
 async function postjob(req, res) {
     try {
         const { Title, Description, Requirements, Salary_range, Location, Job_type } = req.body;
-
-        // Log the person data for debugging
-        console.log('Recruiter ID:', req.person.person);
-        console.log('Company ID:', req.person.companyId);
+       
 
         const newJob = new Job({
             Title,
@@ -28,8 +25,8 @@ async function postjob(req, res) {
             Salary_range,
             Location,
             Job_type,
-            Recruiter_id: req.person.person,   // Recruiter ID
-            Company_id: req.person.companyId     // Company ID
+            Recruiter_id: req.person.person,  
+            Company_id: req.person.companyId     
         });
 
         await newJob.save();
@@ -46,7 +43,7 @@ async function postjob(req, res) {
         const jobId = req.params.id;
         const updates = req.body;
 
-        const updatedJob = await Job.findByIdAndUpdate(jobId, updates, { new: true });
+        const updatedJob = await Job.findByIdAndUpdate(jobId, updates, { new: true },{runValidators:true});
 
         if (!updatedJob) {
             return res.status(404).send({ message: "Job not found" });

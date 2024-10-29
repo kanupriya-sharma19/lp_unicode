@@ -1,0 +1,11 @@
+import express from 'express';
+import { displayfollow, postfollow, deletefollow,getFollowers,getFollowing,getCompanyFollowerCounts} from '../controllers/follow.js';
+const follow = express.Router();
+import { verifyToken } from '../middlewares/authentication.js';
+follow.get('/view_all',displayfollow );
+follow.get('/count',getCompanyFollowerCounts);
+follow.get('/view_followers/:id',getFollowers);
+follow.get('/view_followings',verifyToken,getFollowing);
+follow.post('/follow', verifyToken,postfollow);
+follow.delete('/unfollow/:id',verifyToken,deletefollow);
+export {follow};

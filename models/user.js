@@ -5,14 +5,14 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    lowercase: true,
+    lowercase: [true,"Lower hai"],
   },
   Password: {
     type: String,
     required: true,
   },
   Profile_Image: { type: String, required: false, default: "No profile pic" },
-  Resume: { type: String, required: true },
+  Resume: { type: String, required: false },
   Tech_Stack: {
     Stacks: {
       type: [String],

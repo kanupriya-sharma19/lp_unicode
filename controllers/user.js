@@ -70,7 +70,7 @@ async function postperson(req, res) {
     });
 
     await newperson.save();
-    res.status(201).json({ message: "Person created successfully" });
+    res.status(200).json({ message: "Person created successfully" });
   } catch (error) {
     console.error("Error:", error);
     res

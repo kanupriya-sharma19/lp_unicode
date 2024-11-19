@@ -46,21 +46,21 @@ async function updateblog(req, res) {
     const blogId = req.params.id;
     const updates = req.body;
     const updatedblog = await Blog.findByIdAndUpdate(
-      blogId,
-      updates,
-      { new: true },
-      { runValidators: true }
+        blogId,
+        updates,
+        { new: true, runValidators: true } 
     );
+
     if (!updatedblog) {
-      return res.status(404).send({ message: "Blog not found" });
+        return res.status(404).send({ message: "Blog not found" });
     }
 
-    res.status(200).send({ message: "Blog updated successfully", updatedComp });
-  } catch (error) {
-    res
-      .status(500)
-      .send({ message: "Error updating Blog", details: error.message });
-  }
+
+    res.status(200).send({ message: "Blog updated successfully", updatedblog }); 
+} catch (error) {
+    res.status(500).send({ message: "Error updating Blog", details: error.message });
+}
+
 }
 async function deleteblog(req, res) {
   try {

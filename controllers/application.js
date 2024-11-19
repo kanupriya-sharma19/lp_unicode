@@ -11,8 +11,12 @@ async function displayAllApplication(req, res) {
     const pendingApplications = await Application.find({ status: "pending" })
       .populate("user_id")
       .populate("job_id");
+      const shortlistedApplications = await Application.find({ status: "shortlisted" })
+      .populate("user_id")
+      .populate("job_id");
     res.json({
       accepted: acceptedApplications,
+      shortlisted: shortlistedApplications,
       rejected: rejectedApplications,
       pending: pendingApplications,
     });

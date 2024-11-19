@@ -1,5 +1,5 @@
 import {Job} from "../models/job.js";
-
+import { Application } from "../models/application.js";
 
 async function displayjob(req, res) {
   try {
@@ -72,4 +72,33 @@ async function postjob(req, res) {
     }
   }
   
-export{ displayjob, postjob, updatejob, deletejob};
+  const shortlistApplicants = async (req, res) => {
+    try {
+      const applicationId = req.params.id;
+  
+     
+      const application = await Application.findById(applicationId).populate({
+        path: "job_id",
+      });
+  
+      
+      if (!application) {
+        return res.status(404).json({ message: "Application not found" });
+      }
+  
+     
+      application.status = "shortlisted";
+      await application.save(); 
+  
+    
+      res
+        .status(201)
+        .json({ message: "Applicant successfully shortlisted", application });
+    } catch (err) {
+      console.error("Error shortlisting applicant:", err);
+      return res.status(500).json({ message: "Server error", error: err.message });
+    }
+  };
+  
+
+export{ displayjob, postjob, updatejob, deletejob,shortlistApplicants};

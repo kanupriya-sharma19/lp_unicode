@@ -36,4 +36,8 @@ app.listen(port, () => {
   console.log(`APP IS RUNNING AT PORT ${port}`);
 });
 
+app.get("/", (req, res) => {
+  res.redirect("/job/view_jobs");
+});
+
 export { app };

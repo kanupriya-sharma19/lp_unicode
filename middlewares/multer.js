@@ -7,10 +7,7 @@ const storage = multer.diskStorage({
 });
 
 const image = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  },
+  storage: storage
 }).fields([
   { name: "Profile_Image", maxCount: 1 },
   { name: "Resume", maxCount: 1 },

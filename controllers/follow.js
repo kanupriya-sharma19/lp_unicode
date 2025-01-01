@@ -19,9 +19,10 @@ async function displayfollow(req, res) {
       return follow;
     });
 
-    const populatedFollows = await Promise.all(promises);
+  const all=await Promise.all(promises);
 
-    res.status(200).json(populatedFollows);
+  res.status(200).json({ message: "Successfully read all", data: all });
+
   } catch (error) {
     res
       .status(500)
@@ -41,7 +42,7 @@ async function postfollow(req, res) {
 
     await newfollow.save();
     res
-      .status(201)
+      .status(200)
       .send({ message: "follow created successfully", follow: newfollow });
   } catch (error) {
     res
@@ -74,7 +75,7 @@ async function getFollowers(req, res) {
       model: "person",
     });
     const Name = followers.map((follower) => follower.Follower_id.Name);
-    res.status(200).json({ Name });
+    res.status(200).json({message: "Success",  data:Name });
   } catch (error) {
     res
       .status(500)
@@ -109,7 +110,7 @@ async function getFollowing(req, res) {
       return null;
     });
 
-    res.status(200).json({ names });
+    res.status(200).json({message: "Success", data: names} );
   } catch (error) {
     res
       .status(500)
@@ -128,7 +129,7 @@ async function getCompanyFollowerCounts(req, res) {
         },
       },
     ]);
-    res.status(200).json(followerCounts);
+    res.status(200).json({ message:"Success" , data:followerCounts});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

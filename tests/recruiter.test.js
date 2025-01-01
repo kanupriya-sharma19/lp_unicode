@@ -2,14 +2,15 @@ import request from "supertest";
 import { app } from "../index.js";
 import jwt from "jsonwebtoken"; 
 import mongoose from "mongoose";
-import httpMocks from 'node-mocks-http';
 import { connectToDB } from "../utils/connection.js";
+import dotenv from "dotenv";
+import { verifyRec } from "../middlewares/authentication.js";
+import httpMocks from 'node-mocks-http';
 import jest from "jest-mock";
-import { verifyToken } from "../middlewares/authentication.js";
-
-
+dotenv.config();
 beforeAll(async () => {
-    await connectToDB(); 
+    await connectToDB();
+    
 });
 
 afterAll(async () => {
@@ -18,33 +19,31 @@ afterAll(async () => {
 });
 let validToken ;
 
-
-test('Post User', async () => {
+test('Post Recruiter', async () => {
     const res = await request(app)
-        .post('/user/signup')
-        .send({
-            Name:"demo",
-            Email:"divky@gmail.com",
-            Password:"dwd"
-            
-        });
-       
-       
- validToken = jwt.sign({ person: res.body.person._id}, process.env.SECRETKEY, {
+      .post('/recruiter/post_recruiter')
+      .send({
+        Name: "demo",
+        Password: "demo",
+        Email: "demo665@gmail.com",  
+        Qualification: "demo",
+        Current_position: "demo",
+        Salary: "demo",
+      });  
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Recruiter created successfully');  
+ validToken = jwt.sign({ person:res.body.newrec._id}, process.env.SECRETKEY, {
     expiresIn: "1h",
   });
-    expect(res.statusCode).toBe(200); 
-    expect(res.body).toHaveProperty('message', 'Person created successfully'); 
-    expect(res.body.person).toHaveProperty('_id');
-    
-});
-
+  });
+  
+  
 test('should call next if token is valid', async () => {
   const mockPerson = { _id: 'mockPersonId' }; 
   const res = httpMocks.createResponse();
   res.body = { person: mockPerson }; 
   const validToken = jwt.sign(
-    { person: res.body.person._id }, 
+    { person:res.body.person._id}, 
     process.env.SECRETKEY,
     { expiresIn: '1h' }
   );
@@ -54,17 +53,25 @@ test('should call next if token is valid', async () => {
     },
   });
   const next = jest.fn();
-  await verifyToken(req, res, next);
+  await verifyRec(req, res, next);
   expect(next).toHaveBeenCalled();
   expect(req.person).toHaveProperty('person', 'mockPersonId');
 });
 
 
-
+test('Get Recruiter', async () => {
+    const res = await request(app)
+        .get('/recruiter/view_recruiter')
+      
+    expect(res.statusCode).toBe(200); 
+    expect(res.body).toHaveProperty('message', 'Successfully retreived the recs'); 
+  
+    
+});
 
 test("Protected Route", async () => {
     const res = await request(app)
-      .get("/user/protected")
+      .get("/recruiter/protected")
      .set("authorization", `${validToken}`);
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('message', 'This is a protected route'); 
@@ -73,13 +80,11 @@ test("Protected Route", async () => {
 
 test("Log In", async () => {
     const res = await request(app)
-      .post("/user/login")
+      .post("/recruiter/login_recruiter")
       .send({
-    Email:"divky@gmail.com",
-            Password:"dwd"
+    Email:"demo65@gmail.com",
+            Password:"demo"
       });
-  
-  
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('message', 'Login successful'); 
     
@@ -88,24 +93,19 @@ test("Log In", async () => {
 
   test("Update User", async () => {
     const res = await request(app)
-      .put("/user/update_user")
+      .patch("/recruiter/update_recruiter")
      .set("authorization", `${validToken}`).send({
-        Email:"d$%^$&@gmail.com",
+        Email:"dyufv@gmail.com",
      });
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message', 'User updated successfully'); 
+    expect(res.body).toHaveProperty('message', 'Recruiterss updated successfully'); 
   });
-
- 
 
   test("Delete User", async () => {
     const res = await request(app)
-      .delete("/user/delete_user")
+      .delete("/recruiter/delete_recruiter")
       .set("authorization", `${validToken}`);
-  
-  
-  
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message', 'User deleted successfully');
+    expect(res.body).toHaveProperty('message', 'Recruiters deleted successfully');
   });
   

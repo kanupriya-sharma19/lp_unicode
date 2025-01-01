@@ -10,7 +10,7 @@ async function displayRec(req, res) {
       model: "Company",
     });
 
-    res.status(200).json(allRec);
+    res.status(200).json({ message: "Successfully retreived the recs"});
   } catch (error) {
     res
       .status(500)

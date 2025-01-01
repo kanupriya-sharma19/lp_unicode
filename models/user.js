@@ -11,8 +11,8 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Profile_Image: { type: String, required: false, default: "No profile pic" },
-  Resume: { type: String, required: false },
+  Profile_Image: { type: String,default: "No profile pic" },
+  Resume: { type: String ,default: "No resume"},
   Tech_Stack: {
     Stacks: {
       type: [String],

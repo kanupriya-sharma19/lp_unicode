@@ -7,6 +7,7 @@ async function displayComp(req, res) {
       path: "Recruiters",
       model: "Recruiters",
     });
+    // , karke u can write which info  u want {Rec,name}
     res.status(200).json(allComp);
   } catch (error) {
     res
@@ -85,7 +86,7 @@ const viewRecruiters = async (req, res) => {
         .status(400)
         .json({ message: "Company doesn't have any recruiters" });
     }
-    return res.status(201).json(company.Recruiters);
+    return res.status(200).json(company.Recruiters);
   } catch (err) {
     console.error("Login error", err);
     return res.status(500).json({ message: "Server error" });
@@ -109,7 +110,7 @@ const removeRecruiter = async (req, res) => {
     await recruiter.save();
     await company.save();
     return res
-      .status(201)
+      .status(200)
       .json({ message: "Successfully removed the recruiter" });
   } catch (err) {
     console.error("Login error", err);
@@ -133,7 +134,7 @@ const addRecruiter = async (req, res) => {
     await recruiter.save();
     await company.save();
     return res
-      .status(201)
+      .status(200)
       .json({ message: "Successfully added the recruiter" });
   } catch (err) {
     console.error("Login error", err);

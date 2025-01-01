@@ -38,6 +38,7 @@ async function displayapplication(req, res) {
   }
 }
 
+
 async function postapplication(req, res) {
   const { job_id, status, applied_date } = req.body;
   try {
@@ -57,7 +58,7 @@ async function postapplication(req, res) {
 
 async function deleteapplication(req, res) {
   try {
-    const Id=req.parms.id;
+    const Id=req.params.id;
 
     const deletedApp = await Application.findByIdAndDelete(
       Id);

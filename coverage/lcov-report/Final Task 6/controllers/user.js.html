@@ -32,7 +32,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/39</span>
+                <span class='fraction'>0/42</span>
             </div>
         
             
@@ -424,15 +424,7 @@
 <a name='L359'></a><a href='#L359'>359</a>
 <a name='L360'></a><a href='#L360'>360</a>
 <a name='L361'></a><a href='#L361'>361</a>
-<a name='L362'></a><a href='#L362'>362</a>
-<a name='L363'></a><a href='#L363'>363</a>
-<a name='L364'></a><a href='#L364'>364</a>
-<a name='L365'></a><a href='#L365'>365</a>
-<a name='L366'></a><a href='#L366'>366</a>
-<a name='L367'></a><a href='#L367'>367</a>
-<a name='L368'></a><a href='#L368'>368</a>
-<a name='L369'></a><a href='#L369'>369</a>
-<a name='L370'></a><a href='#L370'>370</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L362'></a><a href='#L362'>362</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -442,20 +434,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -466,6 +444,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -478,7 +462,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -506,9 +490,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -810,56 +794,48 @@ import nodemailer from "nodemailer";
 import { cloudinary } from "../utils/cloudinary.js";
 import path from "path";
 let secretKey = process.env.SECRETKEY;
+&nbsp;
 async function <span class="fstat-no" title="function not covered" >postperson(</span>req, res) {
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const { Name, Email, Password, Tech_Stack, Bio } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+&nbsp;
+    // Check if the email is valid
 <span class="cstat-no" title="statement not covered" >    if (!Email.includes("@gmail.com")) {</span>
 <span class="cstat-no" title="statement not covered" >      return res.status(400).send("Invalid Gmail address!");</span>
     }
-<span class="cstat-no" title="statement not covered" >    if (</span>
-      !req.files ||
-      !req.files.Profile_Image ||
-      req.files.Profile_Image.length === 0 ||
-      !req.files.Resume ||
-      req.files.Resume.length === 0
-    ) {
-<span class="cstat-no" title="statement not covered" >      return res.status(400).send("Profile image and Resume are required!");</span>
-    }
-&nbsp;
-    const profileImageFile = <span class="cstat-no" title="statement not covered" >req.files.Profile_Image[0];</span>
-    const profileImageName = <span class="cstat-no" title="statement not covered" >path.parse(profileImageFile.originalname).name;</span>
 &nbsp;
     let Profile_Image;
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      const profileImageResult = <span class="cstat-no" title="statement not covered" >await cloudinary.uploader.upload(</span>
-        profileImageFile.path,
-        {
+<span class="cstat-no" title="statement not covered" >    if (req.files &amp;&amp; req.files.Profile_Image &amp;&amp; req.files.Profile_Image.length &gt; 0) {</span>
+      const profileImageFile = <span class="cstat-no" title="statement not covered" >req.files.Profile_Image[0];</span>
+      const profileImageName = <span class="cstat-no" title="statement not covered" >path.parse(profileImageFile.originalname).name;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      try {</span>
+        const profileImageResult = <span class="cstat-no" title="statement not covered" >await cloudinary.uploader.upload(profileImageFile.path, {</span>
           folder: "Profile_pics",
           public_id: profileImageName,
-        }
-      );
-<span class="cstat-no" title="statement not covered" >      Profile_Image = profileImageResult.secure_url;</span>
-    } catch (err) {
-<span class="cstat-no" title="statement not covered" >      return res</span>
-        .status(500)
-        .send({ message: "Error uploading profile image", error: err.message });
+        });
+<span class="cstat-no" title="statement not covered" >        Profile_Image = profileImageResult.secure_url;</span>
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        return res.status(500).send({ message: "Error uploading profile image", error: err.message });</span>
+      }
     }
-&nbsp;
-    const resumeFile = <span class="cstat-no" title="statement not covered" >req.files.Resume[0];</span>
-    const resumeFileName = <span class="cstat-no" title="statement not covered" >path.parse(resumeFile.originalname).name;</span>
 &nbsp;
     let Resume;
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      const resumeResult = <span class="cstat-no" title="statement not covered" >await cloudinary.uploader.upload(resumeFile.path, {</span>
-        folder: "Resume",
-        public_id: resumeFileName,
-      });
-<span class="cstat-no" title="statement not covered" >      Resume = resumeResult.secure_url;</span>
-    } catch (err) {
-<span class="cstat-no" title="statement not covered" >      return res</span>
-        .status(500)
-        .send({ message: "Error uploading resume", error: err.message });
+<span class="cstat-no" title="statement not covered" >    if (req.files &amp;&amp; req.files.Resume &amp;&amp; req.files.Resume.length &gt; 0) {</span>
+      const resumeFile = <span class="cstat-no" title="statement not covered" >req.files.Resume[0];</span>
+      const resumeFileName = <span class="cstat-no" title="statement not covered" >path.parse(resumeFile.originalname).name;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      try {</span>
+        const resumeResult = <span class="cstat-no" title="statement not covered" >await cloudinary.uploader.upload(resumeFile.path, {</span>
+          folder: "Resume",
+          public_id: resumeFileName,
+        });
+<span class="cstat-no" title="statement not covered" >        Resume = resumeResult.secure_url;</span>
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        return res.status(500).send({ message: "Error uploading resume", error: err.message });</span>
+      }
     }
+&nbsp;
     const hashedPassword = <span class="cstat-no" title="statement not covered" >await bcrypt.hash(Password, 10);</span>
 &nbsp;
     const newperson = <span class="cstat-no" title="statement not covered" >new person({</span>
@@ -873,14 +849,14 @@ async function <span class="fstat-no" title="function not covered" >postperson(<
     });
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    await newperson.save();</span>
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({ message: "Person created successfully" });</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json({ message: "Person created successfully" ,person:newperson});</span>
+&nbsp;
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    console.error("Error:", error);</span>
-<span class="cstat-no" title="statement not covered" >    res</span>
-      .status(500)
-      .send({ message: "Error in creating person", error: error.message });
+<span class="cstat-no" title="statement not covered" >    res.status(500).send({ message: "Error in creating person", error: error.message });</span>
   }
 }
+&nbsp;
 &nbsp;
 async function <span class="fstat-no" title="function not covered" >loginperson(</span>req, res) {
 <span class="cstat-no" title="statement not covered" >  try {</span>
@@ -1177,7 +1153,7 @@ export { postperson, loginperson, update_user, delete_user };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-05T17:19:58.155Z
+                at 2025-01-01T14:50:42.085Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

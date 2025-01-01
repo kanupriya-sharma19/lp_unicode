@@ -5,5 +5,5 @@ const application = express.Router();
 application.get('/view_application',verifyToken,displayapplication );
 application.get('/view_all_application',displayAllApplication );
 application.post('/post_application',verifyToken, postapplication);
-application.delete('/delete_application/id:',deleteapplication);
+application.delete('/delete_application/:id',deleteapplication);
 export {application};

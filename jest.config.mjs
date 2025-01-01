@@ -1,8 +1,11 @@
+// jest.config.js
 export default {
-    transform: {
-      '^.+\\.js$': 'babel-jest', // Transform JavaScript files
+  testEnvironment: 'node',
+  transform: {},
+  globals: {
+    'ts-jest': {
+      useESM: true,  // Only if you're using TypeScript
     },
-    testEnvironment: 'node',
-    moduleFileExtensions: ['js', 'mjs', 'json', 'node'], // Support for different file extensions
-  };
-  
+  },
+  moduleFileExtensions: ['js', 'json', 'node', 'mjs'],
+};

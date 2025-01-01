@@ -7,6 +7,7 @@ import {
   update_user,
   delete_user,
 } from "../controllers/user.js";
+
 const router = express.Router();
 router.post("/signup", image, postperson);
 router.post("/login", loginperson);

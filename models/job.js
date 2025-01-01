@@ -26,13 +26,11 @@ const JobSchema = new mongoose.Schema({
     },
     Recruiter_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Recruiters', 
-        required: true
+        ref: 'Recruiters'
     },
     Company_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company', 
-        required: true
+        ref: 'Company'
     }
 }); 
 

@@ -7,56 +7,46 @@ import nodemailer from "nodemailer";
 import { cloudinary } from "../utils/cloudinary.js";
 import path from "path";
 let secretKey = process.env.SECRETKEY;
+
 async function postperson(req, res) {
   try {
     const { Name, Email, Password, Tech_Stack, Bio } = req.body;
     if (!Email.includes("@gmail.com")) {
       return res.status(400).send("Invalid Gmail address!");
     }
-    if (
-      !req.files ||
-      !req.files.Profile_Image ||
-      req.files.Profile_Image.length === 0 ||
-      !req.files.Resume ||
-      req.files.Resume.length === 0
-    ) {
-      return res.status(400).send("Profile image and Resume are required!");
-    }
-
-    const profileImageFile = req.files.Profile_Image[0];
-    const profileImageName = path.parse(profileImageFile.originalname).name;
 
     let Profile_Image;
-    try {
-      const profileImageResult = await cloudinary.uploader.upload(
-        profileImageFile.path,
-        {
+    if (req.files && req.files.Profile_Image && req.files.Profile_Image.length > 0) {
+      const profileImageFile = req.files.Profile_Image[0];
+      const profileImageName = path.parse(profileImageFile.originalname).name;
+
+      try {
+        const profileImageResult = await cloudinary.uploader.upload(profileImageFile.path, {
           folder: "Profile_pics",
           public_id: profileImageName,
-        }
-      );
-      Profile_Image = profileImageResult.secure_url;
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ message: "Error uploading profile image", error: err.message });
+        });
+        Profile_Image = profileImageResult.secure_url;
+      } catch (err) {
+        return res.status(500).send({ message: "Error uploading profile image", error: err.message });
+      }
     }
-
-    const resumeFile = req.files.Resume[0];
-    const resumeFileName = path.parse(resumeFile.originalname).name;
 
     let Resume;
-    try {
-      const resumeResult = await cloudinary.uploader.upload(resumeFile.path, {
-        folder: "Resume",
-        public_id: resumeFileName,
-      });
-      Resume = resumeResult.secure_url;
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ message: "Error uploading resume", error: err.message });
+    if (req.files && req.files.Resume && req.files.Resume.length > 0) {
+      const resumeFile = req.files.Resume[0];
+      const resumeFileName = path.parse(resumeFile.originalname).name;
+
+      try {
+        const resumeResult = await cloudinary.uploader.upload(resumeFile.path, {
+          folder: "Resume",
+          public_id: resumeFileName,
+        });
+        Resume = resumeResult.secure_url;
+      } catch (err) {
+        return res.status(500).send({ message: "Error uploading resume", error: err.message });
+      }
     }
+
     const hashedPassword = await bcrypt.hash(Password, 10);
 
     const newperson = new person({
@@ -69,15 +59,16 @@ async function postperson(req, res) {
       Bio,
     });
 
-    await newperson.save();
-    res.status(200).json({ message: "Person created successfully" });
+    const savedPerson = await newperson.save();
+    res.status(200).json({ message: "Person created successfully", person: savedPerson });
+
   } catch (error) {
     console.error("Error:", error);
-    res
-      .status(500)
-      .send({ message: "Error in creating person", error: error.message });
+    res.status(500).send({ message: "Error in creating person", error: error.message });
   }
 }
+
+
 
 async function loginperson(req, res) {
   try {
@@ -161,9 +152,7 @@ async function loginperson(req, res) {
         } else {
           console.log("No profile image uploaded.");
         }
-    
-        // Check for resume upload
-        if (req.files && req.files.Resume) {
+          if (req.files && req.files.Resume) {
           console.log("Resume received:", req.files.Resume[0]); 
           const existingResumeUrl = user.Resume;
           const resumePublicId = existingResumeUrl.split("/").pop().split(".")[0];

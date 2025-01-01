@@ -30,7 +30,7 @@ async function postjob(req, res) {
         });
 
         await newJob.save();
-        res.status(201).send({ message: "Job created successfully", job: newJob });
+        res.status(200).send({ message: "Job created successfully", job: newJob });
     } catch (error) {
         res.status(500).send({ message: "Error creating job", details: error.message });
     }
@@ -43,7 +43,7 @@ async function postjob(req, res) {
         const jobId = req.params.id;
         const updates = req.body;
 
-        const updatedJob = await Job.findByIdAndUpdate(jobId, updates, { new: true },{runValidators:true});
+        const updatedJob = await Job.findByIdAndUpdate(jobId, updates, { new: true ,runValidators:true});
 
         if (!updatedJob) {
             return res.status(404).send({ message: "Job not found" });
@@ -92,7 +92,7 @@ async function postjob(req, res) {
   
     
       res
-        .status(201)
+        .status(200)
         .json({ message: "Applicant successfully shortlisted", application });
     } catch (err) {
       console.error("Error shortlisting applicant:", err);

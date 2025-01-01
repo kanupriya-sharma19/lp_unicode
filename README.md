@@ -1,8 +1,19 @@
-On Render: https://lp-unicode-2.onrender.com/job/view_jobs
+**Job Application Portal**
 
-#Copy paste the above link on hopscotch/postman and refer the screen shots below for the routes to be used.
-#You can create your account as a user, register your company, upload blogs, connect with other companies and users, list a job as a recruiter from your company and the users can file an application for the job too.
 
+Access the application here: https://lp-unicode-2.onrender.com/job/view_jobs
+
+**How to Test the API Routes**
+Copy the above Render link and paste it into Hoppscotch or Postman.
+
+Refer to the screenshots below for the available routes and their usage.
+
+Replace the portion after :8080 in the example URLs with the corresponding paths provided in the API documentation.
+
+Example:
+Localhost URL: http://localhost:8080/user/signup
+
+Render URL: https://lp-unicode-2.onrender.com/user/signup
 
 Postman Collections:
 ![Screenshot 2024-10-29 115027](https://github.com/user-attachments/assets/26265852-410a-4a73-b3c8-7ee0867f4070)

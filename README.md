@@ -1,6 +1,7 @@
 On Render: https://lp-unicode-2.onrender.com/job/view_jobs
-Copy paste the above link on hopscotch/postman and refer the screen shots below for the routes to be used.
-You can create your account as a user, register your company, upload blogs, connect with other companies and users, list a job as a recruiter from your company and the users can file an application for the job too.
+
+#Copy paste the above link on hopscotch/postman and refer the screen shots below for the routes to be used.
+#You can create your account as a user, register your company, upload blogs, connect with other companies and users, list a job as a recruiter from your company and the users can file an application for the job too.
 
 
 Postman Collections:
